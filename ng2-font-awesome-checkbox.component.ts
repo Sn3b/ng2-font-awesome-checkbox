@@ -1,10 +1,10 @@
+// angular
 import {
   Component,
   ElementRef,
   ViewChild,
   Input,
-  OnChanges,
-  OnInit,
+  AfterViewInit,
   forwardRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -12,10 +12,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 let fontAwesomeCheckboxComponentNextId = 0;
 
 @Component({
-  moduleId: module.id,
   selector: 'ng2-font-awesome-checkbox',
   template: `<input #checkbox [attr.id]="id" type="checkbox" (change)="onChange()" /><label [attr.for]="id"></label>`,
-  styleUrls: ['font-awesome-checkbox.component.css'],
+  styleUrls: ['./ng2-font-awesome-checkbox.component.css'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -24,64 +23,51 @@ let fontAwesomeCheckboxComponentNextId = 0;
     }
   ]
 })
-export class Ng2FontAwesomeCheckboxComponent implements OnChanges, OnInit, ControlValueAccessor {
+export class Ng2FontAwesomeCheckboxComponent implements AfterViewInit, ControlValueAccessor {
 
-  get value() {
-    return this._value;
+  get checked() {
+    return this._checked;
   }
-  set value(val) {
-    this._value = val;
-    this._checkbox.nativeElement.checked = this.value;
-    this.onChangeCallback(this._value);
+  set checked(checked: boolean) {
+    this._checked = this._checkbox.nativeElement.checked = checked;
+    this.onChangeCallback(this._checked);
   }
 
-  @Input() public checked: boolean;
   @Input() public content: string;
 
-  @Input() private _value: boolean = null;
   @ViewChild('checkbox') private _checkbox: ElementRef;
+  private _checked: boolean = null;
 
   private id = `ng2_font_awesome_checkbox_${fontAwesomeCheckboxComponentNextId++}`;
 
-  public ngOnChanges(): void {
-    this.value = this.checked;
-  }
-
-  public ngOnInit(): void {
+  public ngAfterViewInit(): void {
     this.setContent();
   }
 
   public writeValue(value: any): void {
     if (value !== undefined) {
-      this.value = value;
+      this.checked = value;
     }
   }
 
-  public registerOnChange(fn): void {
+  public registerOnChange(fn: (_: any) => void): void {
     this.onChangeCallback = fn;
   }
 
-  public registerOnTouched(fn): void {
+  public registerOnTouched(fn: () => void): void {
     this.onTouchedCallback = fn;
   }
 
   public onChange(): void {
-    this.value = this._checkbox.nativeElement.checked;
+    this.checked = this._checkbox.nativeElement.checked;
     this.onTouchedCallback();
   }
 
-  private onChangeCallback = (_: any) => { };
-  private onTouchedCallback = () => { };
+  private onChangeCallback = (_: any) => { }
+  private onTouchedCallback = () => { }
 
   private setContent(): void {
-    // The view hasn't been rendered yet, therefore the DOM only
-    // contains an input field without ID and a label without FOR
-    // attribute. Its rendering is in the callback queue however,
-    // se we call setTimeout to make sure the following code is
-    // executed after the view is fully generated.
-    setTimeout(() => {
-      let label = jQuery('label[for="' + this.id + '"]');
-      label.attr('data-content', this.content);
-    }, 0);
+    let label = document.querySelector('label[for="' + this.id + '"]');
+    label.setAttribute('data-content', this.content);
   }
 }

@@ -1,4 +1,3 @@
-// angular
 import {
   Component,
   ElementRef,

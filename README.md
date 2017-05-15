@@ -8,7 +8,7 @@ A simple checkbox that uses a css "hack" to display text content (to use a FontA
 
 ```html
 <form [formGroup]="myForm">
-  <ng2-font-awesome-checkbox formControlName="doctor" [content]="'&#xf0f0;'"></ng2-font-awesome-checkbox>
+  <ng2-font-awesome-checkbox formControlName="doctor" [icon]="'fa-user'" [color]="'blue'" [size]="'25px'"></ng2-font-awesome-checkbox>
 </form>
 ```
 
@@ -22,6 +22,6 @@ this.myForm = new FormGroup({
 
 ```html
 <form #myForm="ngForm">
-  <ng2-font-awesome-checkbox [(ngModel)]="myModel" [content]="'&#xf007;'" name="myControl" #myControl="ngModel"></ng2-font-awesome-checkbox>
+  <ng2-font-awesome-checkbox [(ngModel)]="myModel" [icon]="'fa-user'" name="myControl" #myControl="ngModel"></ng2-font-awesome-checkbox>
 </form>
 ```

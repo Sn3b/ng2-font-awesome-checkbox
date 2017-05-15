@@ -1,9 +1,9 @@
+// angular
 import {
   Component,
   ElementRef,
   ViewChild,
   Input,
-  AfterViewInit,
   forwardRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -12,8 +12,18 @@ let fontAwesomeCheckboxComponentNextId = 0;
 
 @Component({
   selector: 'ng2-font-awesome-checkbox',
-  template: `<input #checkbox [attr.id]="id" type="checkbox" (change)="onChange()" /><label [attr.for]="id"></label>`,
-  styleUrls: ['./ng2-font-awesome-checkbox.component.css'],
+  template: `<input #checkbox
+                    [attr.id]="id"
+                    type="checkbox"
+                    (change)="onChange()" />
+             <label [attr.for]="id">
+               <i class="fa {{ icon }}"
+                  [style.color]="color"
+                  [style.font-size]="size"
+                  aria-hidden="true"> 
+               </i>
+             </label>`,
+  styleUrls: ['./src/ng2-font-awesome-checkbox.component.css'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -22,29 +32,46 @@ let fontAwesomeCheckboxComponentNextId = 0;
     }
   ]
 })
-export class Ng2FontAwesomeCheckboxComponent implements AfterViewInit, ControlValueAccessor {
+export class Ng2FontAwesomeCheckboxComponent implements ControlValueAccessor {
 
   get checked() {
     return this._checked;
   }
+  
   set checked(checked: boolean) {
     this._checked = this._checkbox.nativeElement.checked = checked;
-    this.onChangeCallback(this._checked);
+
+    if (!this._isValueSetFromWriteValue)
+      this.onChangeCallback(this._checked);
+
+    this._isValueSetFromWriteValue = false;
+  }
+    
+  get color(): string {
+    if(this._checked) {
+      return this._color;
+    } else {
+      return 'lightgrey';
+    }
+  }
+  
+  @Input() set color(value) {
+    this._color = value;
   }
 
-  @Input() public content: string;
+  @Input() public icon: string = 'fa-font-awesome';
+  @Input() public size: string = '1.33333333em';
 
   @ViewChild('checkbox') private _checkbox: ElementRef;
-  private _checked: boolean = null;
+  private _checked: boolean                  = null;
+  private _color: string                     = '#000';
+  private _isValueSetFromWriteValue: boolean = false;
 
   private id = `ng2_font_awesome_checkbox_${fontAwesomeCheckboxComponentNextId++}`;
 
-  public ngAfterViewInit(): void {
-    this.setContent();
-  }
-
   public writeValue(value: any): void {
     if (value !== undefined) {
+      this._isValueSetFromWriteValue = true;
       this.checked = value;
     }
   }
@@ -57,6 +84,10 @@ export class Ng2FontAwesomeCheckboxComponent implements AfterViewInit, ControlVa
     this.onTouchedCallback = fn;
   }
 
+  public setDisabledState(isDisabled: boolean): void {
+    this._checkbox.nativeElement.disabled = isDisabled;
+  }
+
   public onChange(): void {
     this.checked = this._checkbox.nativeElement.checked;
     this.onTouchedCallback();
@@ -64,9 +95,4 @@ export class Ng2FontAwesomeCheckboxComponent implements AfterViewInit, ControlVa
 
   private onChangeCallback = (_: any) => { }
   private onTouchedCallback = () => { }
-
-  private setContent(): void {
-    let label = document.querySelector('label[for="' + this.id + '"]');
-    label.setAttribute('data-content', this.content);
-  }
 }

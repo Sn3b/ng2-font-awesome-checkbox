@@ -23,7 +23,7 @@ let fontAwesomeCheckboxComponentNextId = 0;
                   aria-hidden="true"> 
                </i>
              </label>`,
-  styleUrls: ['./src/ng2-font-awesome-checkbox.component.css'],
+  styleUrls: ['./ng2-font-awesome-checkbox.component.css'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

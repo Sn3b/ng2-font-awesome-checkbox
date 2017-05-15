@@ -2,17 +2,6 @@ input[type=checkbox] {
   display: none;
 }
 
-input[type=checkbox] + label:before {
-  font-family: FontAwesome;
-  display: inline-block;
-}
-
-input[type=checkbox] + label:before {
-  content: attr(data-content);
-  color:lightgrey;
-  font-size: 1.33333333em;
-}
-
-input[type=checkbox]:checked + label:before {
-  color:#666;
-}
+label i {
+  cursor: pointer;
+} 
